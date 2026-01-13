@@ -1,9 +1,18 @@
 import { useState } from 'react';
-import { Heart, MessageCircle, User, Plus, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, MessageCircle, User, Plus, Send, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { ComposePostModal, NewPost } from './ComposePostModal';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 interface Comment {
   id: string;
   author: string;
@@ -103,6 +112,8 @@ export function FeedScreen() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
+  const [deleteCommentInfo, setDeleteCommentInfo] = useState<{ postId: string; commentId: string } | null>(null);
   const { toast } = useToast();
 
   const handleLike = (postId: string) => {
@@ -190,6 +201,31 @@ export function FeedScreen() {
     });
   };
 
+  const handleDeletePost = () => {
+    if (!deletePostId) return;
+    setPosts(prev => prev.filter(post => post.id !== deletePostId));
+    setDeletePostId(null);
+    toast({
+      title: 'Post deleted',
+      description: 'Your post has been removed.',
+    });
+  };
+
+  const handleDeleteComment = () => {
+    if (!deleteCommentInfo) return;
+    const { postId, commentId } = deleteCommentInfo;
+    setPosts(prev => prev.map(post => 
+      post.id === postId 
+        ? { ...post, comments: post.comments.filter(c => c.id !== commentId) }
+        : post
+    ));
+    setDeleteCommentInfo(null);
+    toast({
+      title: 'Comment deleted',
+      description: 'Your comment has been removed.',
+    });
+  };
+
   const getOutcomeStyles = (outcome: FeedPost['outcome']) => {
     switch (outcome) {
       case 'Converted':
@@ -238,7 +274,7 @@ export function FeedScreen() {
               key={post.id}
               className="bg-card rounded-2xl p-5 border border-border/50"
             >
-              {/* Author Header */}
+            {/* Author Header */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                   <User className="w-5 h-5 text-muted-foreground" />
@@ -247,9 +283,20 @@ export function FeedScreen() {
                   <p className="font-medium text-foreground text-sm">{post.author}</p>
                   <p className="text-xs text-muted-foreground font-light">{post.role}</p>
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getOutcomeStyles(post.outcome)}`}>
-                  {post.outcome}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getOutcomeStyles(post.outcome)}`}>
+                    {post.outcome}
+                  </span>
+                  {post.author === 'You' && (
+                    <button
+                      onClick={() => setDeletePostId(post.id)}
+                      className="p-1.5 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      aria-label="Delete post"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Post Title */}
@@ -312,14 +359,23 @@ export function FeedScreen() {
                   {post.comments.length > 0 && (
                     <div className="space-y-3 max-h-60 overflow-y-auto">
                       {post.comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-2.5">
+                        <div key={comment.id} className="flex gap-2.5 group">
                           <div className="w-7 h-7 rounded-full bg-muted/70 flex items-center justify-center flex-shrink-0">
                             <User className="w-3.5 h-3.5 text-muted-foreground" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-baseline gap-2">
+                            <div className="flex items-center gap-2">
                               <span className="text-xs font-medium text-foreground">{comment.author}</span>
                               <span className="text-xs text-muted-foreground/60">{formatTimeAgo(comment.timestamp)}</span>
+                              {comment.author === 'You' && (
+                                <button
+                                  onClick={() => setDeleteCommentInfo({ postId: post.id, commentId: comment.id })}
+                                  className="p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100"
+                                  aria-label="Delete comment"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              )}
                             </div>
                             <p className="text-sm text-muted-foreground font-light mt-0.5 leading-relaxed">
                               {comment.text}
@@ -371,6 +427,42 @@ export function FeedScreen() {
         onClose={() => setIsComposeOpen(false)}
         onSubmit={handleNewPost}
       />
+
+      {/* Delete Post Confirmation */}
+      <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove your post and all its comments. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePost} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Comment Confirmation */}
+      <AlertDialog open={!!deleteCommentInfo} onOpenChange={() => setDeleteCommentInfo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete comment?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove your comment. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteComment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
