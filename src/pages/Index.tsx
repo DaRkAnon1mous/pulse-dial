@@ -1,14 +1,28 @@
 import { useState } from 'react';
 import { DialerScreen } from '@/components/DialerScreen';
 import { ReportsScreen } from '@/components/ReportsScreen';
+import { HomeScreen } from '@/components/HomeScreen';
 import { BottomNavigation } from '@/components/BottomNavigation';
 
 const Index = () => {
-  const [activeScreen, setActiveScreen] = useState('dialer');
+  const [activeScreen, setActiveScreen] = useState('home');
+
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case 'home':
+        return <HomeScreen />;
+      case 'dialer':
+        return <DialerScreen />;
+      case 'reports':
+        return <ReportsScreen />;
+      default:
+        return <HomeScreen />;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background max-w-[430px] mx-auto relative">
-      {activeScreen === 'dialer' ? <DialerScreen /> : <ReportsScreen />}
+      {renderScreen()}
       
       <BottomNavigation 
         activeTab={activeScreen} 
