@@ -19,7 +19,7 @@ export function ECGPulse({ emotionalState }: ECGPulseProps) {
   // Generate ECG-like path
   const generateECGPath = () => {
     const width = 320;
-    const height = 120;
+    const height = 100;
     const midY = height / 2;
     const segmentWidth = 80;
     
@@ -29,16 +29,16 @@ export function ECGPulse({ emotionalState }: ECGPulseProps) {
       // Flat line
       path += ` L ${x + 15} ${midY}`;
       // Small bump (P wave)
-      path += ` Q ${x + 20} ${midY - 10} ${x + 25} ${midY}`;
+      path += ` Q ${x + 20} ${midY - 8} ${x + 25} ${midY}`;
       // Flat
       path += ` L ${x + 30} ${midY}`;
       // Sharp spike up (QRS complex)
-      path += ` L ${x + 35} ${midY - 5}`;
-      path += ` L ${x + 40} ${midY - 50}`;
-      path += ` L ${x + 45} ${midY + 20}`;
+      path += ` L ${x + 35} ${midY - 4}`;
+      path += ` L ${x + 40} ${midY - 40}`;
+      path += ` L ${x + 45} ${midY + 16}`;
       path += ` L ${x + 50} ${midY}`;
       // T wave
-      path += ` Q ${x + 60} ${midY - 15} ${x + 70} ${midY}`;
+      path += ` Q ${x + 60} ${midY - 12} ${x + 70} ${midY}`;
       // Return to baseline
       path += ` L ${x + segmentWidth} ${midY}`;
     }
@@ -48,27 +48,20 @@ export function ECGPulse({ emotionalState }: ECGPulseProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPathOffset((prev) => (prev + 2) % 80);
+      setPathOffset((prev) => (prev + 1.5) % 80);
     }, 50);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative w-full h-32 overflow-hidden rounded-2xl bg-foreground/5">
-      {/* Grid lines */}
-      <div className="absolute inset-0 opacity-20">
-        {[...Array(6)].map((_, i) => (
+    <div className="relative w-full h-24 overflow-hidden rounded-lg bg-muted/50">
+      {/* Subtle grid */}
+      <div className="absolute inset-0 opacity-10">
+        {[...Array(4)].map((_, i) => (
           <div
             key={`h-${i}`}
-            className="absolute w-full h-px bg-muted-foreground"
-            style={{ top: `${(i + 1) * 16.67}%` }}
-          />
-        ))}
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={`v-${i}`}
-            className="absolute h-full w-px bg-muted-foreground"
-            style={{ left: `${(i + 1) * 10}%` }}
+            className="absolute w-full h-px bg-foreground"
+            style={{ top: `${(i + 1) * 20}%` }}
           />
         ))}
       </div>
@@ -76,21 +69,21 @@ export function ECGPulse({ emotionalState }: ECGPulseProps) {
       {/* ECG Line */}
       <svg
         className="absolute inset-0 w-full h-full"
-        viewBox="0 0 320 120"
+        viewBox="0 0 320 100"
         preserveAspectRatio="none"
       >
         <defs>
           <linearGradient id="ecgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={color} stopOpacity="0.2" />
-            <stop offset="50%" stopColor={color} stopOpacity="1" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.2" />
+            <stop offset="0%" stopColor={color} stopOpacity="0.1" />
+            <stop offset="50%" stopColor={color} stopOpacity="0.8" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <path
           d={generateECGPath()}
           fill="none"
           stroke="url(#ecgGradient)"
-          strokeWidth="2.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
@@ -100,9 +93,9 @@ export function ECGPulse({ emotionalState }: ECGPulseProps) {
         />
       </svg>
 
-      {/* Pulse dot */}
+      {/* Pulse dot - right edge */}
       <div 
-        className="absolute right-8 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full pulse-dot"
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full pulse-dot"
         style={{ backgroundColor: color }}
       />
     </div>

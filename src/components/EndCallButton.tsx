@@ -15,14 +15,15 @@ export function EndCallButton({ onEndCall }: EndCallButtonProps) {
     setIsHolding(true);
     setProgress(0);
 
+    // Update progress for circular indicator - 1.2s hold
     progressInterval.current = setInterval(() => {
-      setProgress((prev) => Math.min(prev + 2, 100));
-    }, 40);
+      setProgress((prev) => Math.min(prev + (100 / 24), 100)); // 24 steps over 1.2s = 50ms intervals
+    }, 50);
 
     holdTimer.current = setTimeout(() => {
       onEndCall();
       cleanup();
-    }, 2000);
+    }, 1200);
   };
 
   const handlePressEnd = () => {
@@ -42,39 +43,57 @@ export function EndCallButton({ onEndCall }: EndCallButtonProps) {
     }
   };
 
+  const circumference = 2 * Math.PI * 16;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   return (
-    <div className="relative">
-      <button
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onMouseLeave={handlePressEnd}
-        onTouchStart={handlePressStart}
-        onTouchEnd={handlePressEnd}
-        className={`w-full relative overflow-hidden bg-destructive/10 border-2 border-destructive text-destructive rounded-2xl py-4 px-6 flex items-center justify-center gap-3 font-semibold transition-all duration-200 ${
-          isHolding ? 'scale-[0.98]' : ''
-        }`}
-      >
-        {/* Progress fill */}
-        <div 
-          className="absolute inset-0 bg-destructive transition-all duration-100 ease-linear"
-          style={{ width: `${progress}%`, opacity: 0.2 }}
-        />
-        
-        <PhoneOff className="w-5 h-5 relative z-10" />
-        <span className="relative z-10">
-          {isHolding ? 'Hold to End...' : 'Hold to End Call'}
-        </span>
-      </button>
-      
-      {/* Progress indicator */}
-      {isHolding && (
-        <div className="absolute -bottom-1 left-0 right-0 h-1 bg-destructive/20 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-destructive rounded-full transition-all duration-100 ease-linear"
-            style={{ width: `${progress}%` }}
+    <button
+      onMouseDown={handlePressStart}
+      onMouseUp={handlePressEnd}
+      onMouseLeave={handlePressEnd}
+      onTouchStart={handlePressStart}
+      onTouchEnd={handlePressEnd}
+      className={`group relative flex items-center justify-center gap-3 w-full py-4 rounded-xl transition-all duration-200 ${
+        isHolding 
+          ? 'bg-destructive text-destructive-foreground scale-[0.98]' 
+          : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+      }`}
+    >
+      {/* Circular progress indicator */}
+      <div className="relative w-6 h-6">
+        <svg className="w-6 h-6 -rotate-90" viewBox="0 0 36 36">
+          {/* Background circle */}
+          <circle
+            cx="18"
+            cy="18"
+            r="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="opacity-20"
           />
-        </div>
-      )}
-    </div>
+          {/* Progress circle */}
+          {isHolding && (
+            <circle
+              cx="18"
+              cy="18"
+              r="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              className="transition-all duration-75"
+            />
+          )}
+        </svg>
+        <PhoneOff className="absolute inset-0 m-auto w-3.5 h-3.5" />
+      </div>
+      
+      <span className="text-sm font-medium">
+        {isHolding ? 'Ending...' : 'Hold to end'}
+      </span>
+    </button>
   );
 }

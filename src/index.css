@@ -2,54 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Core palette - Modern Indian app aesthetic */
-    --background: 210 20% 98%;
-    --foreground: 220 25% 10%;
+    /* Premium minimal palette - Notion/Linear inspired */
+    --background: 0 0% 99%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover-foreground: 0 0% 9%;
 
-    /* Vibrant call green - WhatsApp inspired */
-    --primary: 152 69% 45%;
+    /* Soft muted green - primary action color */
+    --primary: 158 42% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Warm coral accent - Swiggy inspired */
-    --secondary: 16 85% 57%;
+    /* Light amber - AI hints only */
+    --ai-hint: 40 85% 55%;
+    --ai-hint-foreground: 40 30% 20%;
+
+    /* Warm coral accent - kept for disposition/secondary actions */
+    --secondary: 16 60% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 15% 93%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 220 15% 96%;
-    --accent-foreground: 220 25% 10%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
 
+    /* Only for end call */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Stress colors for pulse */
-    --stress-low: 152 69% 45%;
-    --stress-medium: 45 93% 47%;
-    --stress-high: 0 72% 51%;
+    /* Pulse states - more muted */
+    --stress-low: 158 42% 45%;
+    --stress-medium: 40 50% 50%;
+    --stress-high: 0 50% 50%;
 
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 152 69% 45%;
+    --border: 0 0% 92%;
+    --input: 0 0% 92%;
+    --ring: 158 42% 45%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    /* Custom shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(220 25% 10% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(220 25% 10% / 0.07), 0 2px 4px -2px hsl(220 25% 10% / 0.07);
-    --shadow-lg: 0 10px 15px -3px hsl(220 25% 10% / 0.08), 0 4px 6px -4px hsl(220 25% 10% / 0.08);
-    --shadow-call: 0 8px 30px -4px hsl(152 69% 45% / 0.4);
-    --shadow-card: 0 2px 12px -2px hsl(220 25% 10% / 0.08);
+    /* Softer shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.03);
+    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.05);
+    --shadow-lg: 0 8px 24px -4px hsl(0 0% 0% / 0.06);
+    --shadow-call: 0 4px 20px -4px hsl(158 42% 45% / 0.25);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.04);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -62,33 +67,36 @@
   }
 
   .dark {
-    --background: 220 20% 8%;
-    --foreground: 210 20% 98%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
 
-    --card: 220 20% 12%;
-    --card-foreground: 210 20% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 152 69% 50%;
+    --primary: 158 42% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 16 85% 60%;
+    --ai-hint: 40 75% 50%;
+    --ai-hint-foreground: 40 20% 90%;
+
+    --secondary: 16 55% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 220 10% 60%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 220 15% 18%;
-    --accent-foreground: 210 20% 98%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
-    --ring: 152 69% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 158 42% 50%;
   }
 }
 
@@ -108,34 +116,34 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-muted;
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full;
+    @apply bg-muted-foreground/20 rounded-full;
   }
 }
 
 @layer components {
-  /* Call button glow animation */
+  /* Call button subtle glow */
   .call-button-glow {
-    animation: callGlow 2s ease-in-out infinite;
+    animation: callGlow 3s ease-in-out infinite;
   }
 
   @keyframes callGlow {
     0%, 100% {
-      box-shadow: 0 8px 30px -4px hsl(152 69% 45% / 0.4);
+      box-shadow: 0 4px 20px -4px hsl(158 42% 45% / 0.25);
     }
     50% {
-      box-shadow: 0 8px 40px -4px hsl(152 69% 45% / 0.6);
+      box-shadow: 0 4px 28px -4px hsl(158 42% 45% / 0.35);
     }
   }
 
-  /* ECG pulse animation */
+  /* ECG pulse animation - smoother */
   .ecg-line {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
-    animation: ecgDraw 2s linear infinite;
+    animation: ecgDraw 2.5s linear infinite;
   }
 
   @keyframes ecgDraw {
@@ -144,44 +152,44 @@
     }
   }
 
-  /* Pulse dot animation */
+  /* Pulse dot animation - gentler */
   .pulse-dot {
-    animation: pulseDot 1s ease-in-out infinite;
+    animation: pulseDot 1.5s ease-in-out infinite;
   }
 
   @keyframes pulseDot {
     0%, 100% {
       transform: scale(1);
-      opacity: 1;
+      opacity: 0.9;
     }
     50% {
-      transform: scale(1.2);
-      opacity: 0.7;
+      transform: scale(1.15);
+      opacity: 0.6;
     }
   }
 
-  /* End call hold progress */
-  .hold-progress {
-    animation: holdFill 2s linear forwards;
+  /* Circular progress for end call */
+  .circular-progress {
+    animation: circularFill 1.2s linear forwards;
   }
 
-  @keyframes holdFill {
+  @keyframes circularFill {
     from {
-      width: 0%;
+      stroke-dashoffset: 100;
     }
     to {
-      width: 100%;
+      stroke-dashoffset: 0;
     }
   }
 
-  /* Slide up animation */
+  /* Slide up animation - subtler */
   .slide-up {
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp 0.25s ease-out;
   }
 
   @keyframes slideUp {
     from {
-      transform: translateY(20px);
+      transform: translateY(12px);
       opacity: 0;
     }
     to {
@@ -190,9 +198,9 @@
     }
   }
 
-  /* Recording indicator */
+  /* Recording indicator - subtle */
   .recording-dot {
-    animation: recordingPulse 1.5s ease-in-out infinite;
+    animation: recordingPulse 2s ease-in-out infinite;
   }
 
   @keyframes recordingPulse {
@@ -200,7 +208,21 @@
       opacity: 1;
     }
     50% {
-      opacity: 0.3;
+      opacity: 0.4;
+    }
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 }

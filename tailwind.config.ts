@@ -50,6 +50,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        ai: {
+          hint: "hsl(var(--ai-hint))",
+          "hint-foreground": "hsl(var(--ai-hint-foreground))",
+        },
         stress: {
           low: "hsl(var(--stress-low))",
           medium: "hsl(var(--stress-medium))",
