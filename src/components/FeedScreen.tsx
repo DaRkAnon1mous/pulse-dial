@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Heart, MessageCircle, User } from 'lucide-react';
+import { Heart, MessageCircle, User, Plus } from 'lucide-react';
+import { ComposePostModal, NewPost } from './ComposePostModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface FeedPost {
   id: string;
@@ -72,6 +74,8 @@ const mockPosts: FeedPost[] = [
 
 export function FeedScreen() {
   const [posts, setPosts] = useState<FeedPost[]>(mockPosts);
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleLike = (postId: string) => {
     setPosts(prev => prev.map(post => 
@@ -83,6 +87,27 @@ export function FeedScreen() {
           }
         : post
     ));
+  };
+
+  const handleNewPost = (newPost: NewPost) => {
+    const post: FeedPost = {
+      id: Date.now().toString(),
+      author: 'You',
+      role: 'BD Executive',
+      title: newPost.title,
+      situation: newPost.situation,
+      handling: newPost.handling,
+      learning: newPost.learning,
+      outcome: newPost.outcome,
+      likes: 0,
+      comments: 0,
+      liked: false,
+    };
+    setPosts(prev => [post, ...prev]);
+    toast({
+      title: 'Post shared!',
+      description: 'Your experience has been shared with the team.',
+    });
   };
 
   const getOutcomeStyles = (outcome: FeedPost['outcome']) => {
@@ -99,9 +124,17 @@ export function FeedScreen() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
-        <p className="text-muted-foreground text-sm font-light">Learn from peers</p>
-        <h1 className="text-2xl font-semibold text-foreground mt-1">Team Feed</h1>
+      <div className="px-5 pt-12 pb-4 flex items-end justify-between">
+        <div>
+          <p className="text-muted-foreground text-sm font-light">Learn from peers</p>
+          <h1 className="text-2xl font-semibold text-foreground mt-1">Team Feed</h1>
+        </div>
+        <button
+          onClick={() => setIsComposeOpen(true)}
+          className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="w-5 h-5 text-primary-foreground" />
+        </button>
       </div>
 
       {/* Feed Posts */}
@@ -168,6 +201,13 @@ export function FeedScreen() {
           </article>
         ))}
       </div>
+
+      {/* Compose Modal */}
+      <ComposePostModal
+        isOpen={isComposeOpen}
+        onClose={() => setIsComposeOpen(false)}
+        onSubmit={handleNewPost}
+      />
     </div>
   );
 }
