@@ -1,4 +1,4 @@
-import { BarChart3, PhoneCall, Home } from 'lucide-react';
+import { BarChart3, PhoneCall, Home, Newspaper } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -15,6 +15,7 @@ export function BottomNavigation({ activeTab, onTabChange, isInCall }: BottomNav
   const tabs = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'dialer', label: 'Dialer', icon: PhoneCall },
+    { id: 'feed', label: 'Feed', icon: Newspaper },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
   ];
 

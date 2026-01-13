@@ -1,4 +1,4 @@
-import { Phone, Sparkles, Calendar, ArrowRight } from 'lucide-react';
+import { Phone, Sparkles, Calendar, ArrowRight, Users } from 'lucide-react';
 import { useRescheduledCalls } from '@/contexts/RescheduledCallsContext';
 import { format, isToday, isTomorrow } from 'date-fns';
 
@@ -15,7 +15,19 @@ const pitchHints = [
   "Mention case studies relevant to their industry",
 ];
 
-export function HomeScreen() {
+const featuredPost = {
+  author: 'Arjun Mehta',
+  role: 'Senior BD',
+  title: 'How I handled a pricing objection from a CTO',
+  excerpt: 'Instead of defending our price, I asked what specific features they needed most...',
+  outcome: 'Converted' as const,
+};
+
+interface HomeScreenProps {
+  onNavigateToFeed?: () => void;
+}
+
+export function HomeScreen({ onNavigateToFeed }: HomeScreenProps) {
   const { rescheduledCalls } = useRescheduledCalls();
   
   // Get a rotating hint based on time
@@ -97,6 +109,36 @@ export function HomeScreen() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* From the Team */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-foreground flex items-center gap-2">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              From the Team
+            </h2>
+          </div>
+          
+          <button 
+            onClick={onNavigateToFeed}
+            className="w-full text-left bg-card rounded-xl p-4 border border-border/50 hover:border-border transition-colors"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-sm font-medium text-foreground">{featuredPost.author}</p>
+              <span className="text-xs text-muted-foreground">·</span>
+              <p className="text-xs text-muted-foreground">{featuredPost.role}</p>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary ml-auto">
+                {featuredPost.outcome}
+              </span>
+            </div>
+            <p className="text-sm text-foreground font-medium mb-1.5">{featuredPost.title}</p>
+            <p className="text-sm text-muted-foreground font-light line-clamp-2">{featuredPost.excerpt}</p>
+            <div className="flex items-center gap-1 mt-3 text-xs text-primary">
+              <span>Read more</span>
+              <ArrowRight className="w-3 h-3" />
+            </div>
+          </button>
         </div>
 
         {/* AI Pitch Hint */}
