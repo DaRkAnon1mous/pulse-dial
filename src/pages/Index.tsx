@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DialerScreen } from '@/components/DialerScreen';
 import { ReportsScreen } from '@/components/ReportsScreen';
 import { HomeScreen } from '@/components/HomeScreen';
+import { FeedScreen } from '@/components/FeedScreen';
 import { BottomNavigation } from '@/components/BottomNavigation';
 
 const Index = () => {
@@ -10,13 +11,15 @@ const Index = () => {
   const renderScreen = () => {
     switch (activeScreen) {
       case 'home':
-        return <HomeScreen />;
+        return <HomeScreen onNavigateToFeed={() => setActiveScreen('feed')} />;
       case 'dialer':
         return <DialerScreen />;
+      case 'feed':
+        return <FeedScreen />;
       case 'reports':
         return <ReportsScreen />;
       default:
-        return <HomeScreen />;
+        return <HomeScreen onNavigateToFeed={() => setActiveScreen('feed')} />;
     }
   };
 
