@@ -7,14 +7,16 @@ import { InfoTab } from './InfoTab';
 import { PulseTab } from './PulseTab';
 import { EndCallButton } from './EndCallButton';
 import { DispositionScreen } from './DispositionScreen';
+import { CallAnalysisSummary } from './CallAnalysisSummary';
 
-type DialerState = 'idle' | 'in-call' | 'disposition';
+type DialerState = 'idle' | 'in-call' | 'disposition' | 'analysis';
 type InCallTab = 'info' | 'pulse';
 
 export function DialerScreen() {
   const [state, setState] = useState<DialerState>('idle');
   const [activeTab, setActiveTab] = useState<InCallTab>('info');
   const [callStartTime, setCallStartTime] = useState<Date | null>(null);
+  const [lastDisposition, setLastDisposition] = useState<string>('');
 
   const handleStartCall = () => {
     setState('in-call');
@@ -28,12 +30,27 @@ export function DialerScreen() {
 
   const handleDispositionComplete = (disposition: string) => {
     console.log('Disposition:', disposition);
+    setLastDisposition(disposition);
+    setState('analysis');
+  };
+
+  const handleAnalysisComplete = () => {
     setState('idle');
     setCallStartTime(null);
+    setLastDisposition('');
   };
 
   if (state === 'disposition') {
     return <DispositionScreen onComplete={handleDispositionComplete} />;
+  }
+
+  if (state === 'analysis') {
+    return (
+      <CallAnalysisSummary 
+        disposition={lastDisposition} 
+        onContinue={handleAnalysisComplete} 
+      />
+    );
   }
 
   return (
