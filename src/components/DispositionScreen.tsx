@@ -9,6 +9,10 @@ import {
   ArrowLeft,
   Check
 } from 'lucide-react';
+import { RescheduleModal } from './RescheduleModal';
+import { useRescheduledCalls } from '@/contexts/RescheduledCallsContext';
+import { mockProspect } from '@/data/mockData';
+import { toast } from 'sonner';
 
 interface DispositionScreenProps {
   onComplete: (disposition: string) => void;
@@ -20,6 +24,8 @@ export function DispositionScreen({ onComplete }: DispositionScreenProps) {
   const [selected, setSelected] = useState<DispositionType>(null);
   const [notes, setNotes] = useState('');
   const [stage, setStage] = useState<'MQL' | 'SQL'>('MQL');
+  const [showReschedule, setShowReschedule] = useState(false);
+  const { addRescheduledCall } = useRescheduledCalls();
 
   const dispositions = [
     { id: 'didnt_connect' as const, label: "Didn't Connect", icon: PhoneMissed, color: 'text-muted-foreground' },
@@ -30,11 +36,49 @@ export function DispositionScreen({ onComplete }: DispositionScreenProps) {
     { id: 'conversation_review' as const, label: 'Conversation Review', icon: MessageSquare, color: 'text-primary' },
   ];
 
+  const handleDispositionClick = (id: DispositionType) => {
+    if (id === 'reschedule') {
+      setShowReschedule(true);
+    } else {
+      setSelected(id);
+    }
+  };
+
+  const handleRescheduleSave = (date: Date, time: string, note: string) => {
+    addRescheduledCall({
+      id: `rescheduled-${Date.now()}`,
+      prospectId: mockProspect.id,
+      prospectName: mockProspect.name,
+      company: mockProspect.company,
+      phone: mockProspect.phone,
+      scheduledDate: date,
+      scheduledTime: time,
+      note: note || undefined,
+      createdAt: new Date(),
+    });
+    
+    setShowReschedule(false);
+    toast.success('Call scheduled successfully', {
+      description: `${mockProspect.name} · ${time}`,
+    });
+    onComplete('reschedule');
+  };
+
   const handleSubmit = () => {
     if (selected) {
       onComplete(selected);
     }
   };
+
+  if (showReschedule) {
+    return (
+      <RescheduleModal
+        prospectName={mockProspect.name}
+        onSave={handleRescheduleSave}
+        onCancel={() => setShowReschedule(false)}
+      />
+    );
+  }
 
   if (selected === 'conversation_review') {
     return (
@@ -120,7 +164,7 @@ export function DispositionScreen({ onComplete }: DispositionScreenProps) {
           return (
             <button
               key={disposition.id}
-              onClick={() => setSelected(disposition.id)}
+              onClick={() => handleDispositionClick(disposition.id)}
               className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
                 isSelected 
                   ? 'border-primary bg-primary/5' 
